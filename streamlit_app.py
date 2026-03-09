@@ -1,43 +1,39 @@
 import streamlit as st
 
-st.set_page_config(page_title="Lothlórien Sage", page_icon="🍃")
+st.set_page_config(page_title="Sage of Lórien", page_icon="🍃")
+st.title("🌿 The Sage of Lothlórien")
 
-st.title("🌿 Conversation with the Sage")
-st.write("Discuss the mysteries of the Golden Wood. The Sage remembers what you say!")
-
-# 1. Initialize the memory (Chat History)
 if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {"role": "assistant", "content": "Greetings, traveler. I am the Sage of Lórien. What would you like to discuss? Perhaps the nature of Time, or the gifts of the Lady?"}
-    ]
+    st.session_state.messages = [{"role": "assistant", "content": "I am the Sage of these woods. Ask me about time, the Lady's gifts, or the Mirror, and we shall discuss their meaning."}]
 
-# 2. Display the conversation history
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# 3. The "Brain" - Logic to respond more than once
-if prompt := st.chat_input("Type your thoughts here..."):
-    # Add user message to history
+if prompt := st.chat_input("Speak, traveler..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Generate the Sage's response
+    # The "Better Ears" Logic
+    u = prompt.lower()
+    resp = ""
+
+    if any(w in u for w in ["time", "past", "years", "memory", "ancient"]):
+        resp = "In Lórien, the past is not gone; it stays alive in our memories. Does it feel strange to walk in a place where time seems to stand still?"
+    elif any(w in u for w in ["gift", "rope", "light", "phial", "sheath", "belt"]):
+        resp = "The Lady's gifts are for more than just survival. They represent the choices each member must make. Which gift do you think holds the most power?"
+    elif any(w in u for w in ["ring", "temptation", "test", "queen"]):
+        resp = "The Lady Galadriel passed her test by refusing the Ring. It shows that even the most powerful must choose humility. What would have happened if she failed?"
+    elif any(w in u for w in ["mirror", "future", "vision", "see"]):
+        resp = "The Mirror shows many things—some that have not yet come to pass. Do you think it is a gift or a curse to see the future?"
+    elif any(w in u for w in ["beauty", "pretty", "nice", "healing", "pure"]):
+        resp = "The beauty here is a reflection of goodness. It heals the spirit. Did the Fellowship seem more rested after staying with us?"
+    elif any(w in u for w in ["cloak", "clothes", "hidden", "gray"]):
+        resp = "Our elven cloaks are woven with the colors of the leaves and stones. They provide protection through unity. Why is it important for the group to look the same?"
+    else:
+        resp = "That is a deep thought. Tell me, how does that help the Fellowship prepare for the darkness of Mordor?"
+
     with st.chat_message("assistant"):
-        response = ""
-        user_text = prompt.lower()
-
-        # Simple logic to "Guide" them based on what they type
-        if "time" in user_text or "memory" in user_text:
-            response = "Time here is fluid, like a river. Do you think the Elves stay here to remember the past, or to protect the present?"
-        elif "gift" in user_text or "galadriel" in user_text:
-            response = "The Lady's gifts are mirrors of the heart. Which gift do you think was most important for the journey ahead?"
-        elif "beauty" in user_text:
-            response = "In this wood, beauty is a shield against the shadow. Does it feel like a place of healing to you?"
-        else:
-            response = "That is an interesting perspective. Tell me more about how that connects to what the Fellowship experienced in Lothlórien."
-
-        st.markdown(response)
-        # Add assistant response to history
-        st.session_state.messages.append({"role": "assistant", "content": response})
+        st.markdown(resp)
+        st.session_state.messages.append({"role": "assistant", "content": resp})
