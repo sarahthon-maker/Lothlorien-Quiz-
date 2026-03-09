@@ -1,39 +1,46 @@
 import streamlit as st
 
-st.set_page_config(page_title="Sage of Lórien", page_icon="🍃")
-st.title("🌿 The Sage of Lothlórien")
+st.set_page_config(page_title="Lothlórien Workbook", page_icon="🌿")
 
-if "messages" not in st.session_state:
-    st.session_state.messages = [{"role": "assistant", "content": "I am the Sage of these woods. Ask me about time, the Lady's gifts, or the Mirror, and we shall discuss their meaning."}]
+st.title("🌿 Lothlórien Study Guide")
+st.write("Complete the 10 insights below to prepare for the journey ahead.")
 
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+# The 10 Questions and Answers you provided
+data = [
+    {"q": "What does Lothlórien teach about time and memory?", "keys": ["fluid", "blending", "ancient", "past"], "hint": "Think about how the past and present feel like they are mixing together."},
+    {"q": "How do the gifts from Galadriel encode character arcs?", "keys": ["arc", "choices", "future", "rope", "phial"], "hint": "Think about how items like the Phial or the Rope help them later."},
+    {"q": "Why is beauty presented with moral weight?", "keys": ["moral", "healing", "spiritual", "purity"], "hint": "Is beauty just 'looking good,' or is it a sign of being 'good'?"},
+    {"q": "How does Lothlórien differ from other places?", "keys": ["serenity", "purity", "timeless", "corruption"], "hint": "How is it different from the dark, scary places like Moria?"},
+    {"q": "What test does Galadriel face with the Ring?", "keys": ["temptation", "queen", "humility", "wisdom", "refusal"], "hint": "What did she imagine she would become if she took it?"},
+    {"q": "What does Frodo see in Galadriel's mirror?", "keys": ["future", "suffering", "magnitude", "quest"], "hint": "Does the mirror show happy things or the weight of the mission?"},
+    {"q": "How do different members experience the woods?", "keys": ["wonder", "sadness", "longing", "unease"], "hint": "Compare how Legolas feels to how Boromir feels."},
+    {"q": "What is the significance of the elven cloaks?", ["protection", "unity", "identity", "symbolic"], "hint": "How do these gifts help them stay hidden and united?"},
+    {"q": "How does this time prepare the Fellowship?", ["strength", "counsel", "restore", "spiritually"], "hint": "Did they leave feeling tired or strengthened?"},
+    {"q": "What does Galadriel’s song reveal?", ["sorrow", "fading", "passing", "ages"], "hint": "Is the song about things staying the same or things going away?"}
+]
 
-if prompt := st.chat_input("Speak, traveler..."):
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
+# Track progress
+score = 0
 
-    # The "Better Ears" Logic
-    u = prompt.lower()
-    resp = ""
+for i, item in enumerate(data):
+    st.subheader(f"Insight {i+1}")
+    ans = st.text_input(item['q'], key=f"q{i}").lower()
+    
+    if ans:
+        # Check if they used one of your keywords
+        found = [word for word in item['keys'] if word in ans]
+        if found:
+            st.success(f"✨ Excellent. You recognized the theme of {found[0]}.")
+            score += 1
+        else:
+            st.info(f"💡 Hint: {item['hint']}")
+    st.divider()
 
-    if any(w in u for w in ["time", "past", "years", "memory", "ancient"]):
-        resp = "In Lórien, the past is not gone; it stays alive in our memories. Does it feel strange to walk in a place where time seems to stand still?"
-    elif any(w in u for w in ["gift", "rope", "light", "phial", "sheath", "belt"]):
-        resp = "The Lady's gifts are for more than just survival. They represent the choices each member must make. Which gift do you think holds the most power?"
-    elif any(w in u for w in ["ring", "temptation", "test", "queen"]):
-        resp = "The Lady Galadriel passed her test by refusing the Ring. It shows that even the most powerful must choose humility. What would have happened if she failed?"
-    elif any(w in u for w in ["mirror", "future", "vision", "see"]):
-        resp = "The Mirror shows many things—some that have not yet come to pass. Do you think it is a gift or a curse to see the future?"
-    elif any(w in u for w in ["beauty", "pretty", "nice", "healing", "pure"]):
-        resp = "The beauty here is a reflection of goodness. It heals the spirit. Did the Fellowship seem more rested after staying with us?"
-    elif any(w in u for w in ["cloak", "clothes", "hidden", "gray"]):
-        resp = "Our elven cloaks are woven with the colors of the leaves and stones. They provide protection through unity. Why is it important for the group to look the same?"
-    else:
-        resp = "That is a deep thought. Tell me, how does that help the Fellowship prepare for the darkness of Mordor?"
+# Final Progress Bar
+st.sidebar.title("Progress")
+st.sidebar.progress(score / 10)
+st.sidebar.write(f"You have unlocked {score} out of 10 insights.")
 
-    with st.chat_message("assistant"):
-        st.markdown(resp)
-        st.session_state.messages.append({"role": "assistant", "content": resp})
+if score == 10:
+    st.balloons()
+    st.sidebar.success("🏆 Master of Lore!")
