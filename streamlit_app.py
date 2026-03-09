@@ -47,4 +47,43 @@ data = [
         "hint": "Compare how Legolas feels to how Boromir or Sam feel."
     },
     {
-        "q":
+        "q": "8. What is the significance of the elven cloaks?", 
+        "keys": ["protection", "unity", "identity", "symbolic", "camouflage"], 
+        "hint": "How do these gifts help them stay hidden and united?"
+    },
+    {
+        "q": "9. How does this time prepare the Fellowship?", 
+        "keys": ["strength", "counsel", "restore", "spiritually", "rest"], 
+        "hint": "Did they leave feeling tired or strengthened?"
+    },
+    {
+        "q": "10. What does Galadriel’s song reveal?", 
+        "keys": ["sorrow", "fading", "passing", "ages", "farewell"], 
+        "hint": "Is the song about things staying the same or things going away?"
+    }
+]
+
+# --- APP LOGIC ---
+score = 0
+my_bar = st.progress(0)
+
+# Loop through questions
+for i, item in enumerate(data):
+    st.subheader(f"Insight {i+1}")
+    ans = st.text_input(item['q'], key=f"q{i}").lower()
+    
+    if ans:
+        found = [word for word in item['keys'] if word in ans]
+        if found:
+            st.success(f"✨ Excellent. You recognized the theme of: {', '.join(found)}.")
+            score += 1
+        else:
+            st.info(f"💡 The Sage Whispers: {item['hint']}")
+    st.divider()
+
+# Update progress
+my_bar.progress(score * 10)
+
+if score == 10:
+    st.balloons()
+    st.success("🏆 You have mastered the lore of the Golden Wood!")
